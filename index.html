@@ -5,74 +5,79 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>TRON AI</title>
   <link rel="manifest" href="manifest.json">
-  <meta name="theme-color" content="#0b0f19">
+  <meta name="theme-color" content="#090d16">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
-    body { background-color: #0b0f19; color: #f1f5f9; display: flex; flex-direction: column; height: 100vh; height: 100dvh; overflow: hidden; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    html, body { width: 100%; height: 100%; height: 100dvh; background-color: #090d16; color: #ffffff; overflow: hidden; display: flex; flex-direction: column; }
     
     /* Header */
-    .header { background: #131b2e; padding: 16px; text-align: center; font-size: 18px; font-weight: bold; color: #38bdf8; border-bottom: 1px solid #1e293b; display: flex; justify-content: center; align-items: center; gap: 8px; }
-    .header span { background: #0284c7; color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 4px; }
+    .app-header { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; background: #111827; border-bottom: 1px solid #1f2937; font-size: 17px; font-weight: 600; }
+    .app-header .title { display: flex; align-items: center; gap: 8px; color: #38bdf8; }
+    .app-header .badge { background: #0284c7; color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: bold; }
 
-    /* Chat Container */
-    .chat-container { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
-    .message { max-width: 85%; padding: 12px 16px; border-radius: 16px; font-size: 15px; line-height: 1.4; word-wrap: break-word; }
-    .bot { background: #1e293b; color: #f8fafc; align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid #334155; }
-    .user { background: #0284c7; color: #ffffff; align-self: flex-end; border-bottom-right-radius: 4px; }
+    /* Messages Area */
+    .chat-box { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 14px; -webkit-overflow-scrolling: touch; }
+    .message { max-width: 88%; padding: 12px 16px; border-radius: 14px; font-size: 15px; line-height: 1.5; word-break: break-word; }
+    .message.bot { background: #1f2937; color: #f3f4f6; align-self: flex-start; border-bottom-left-radius: 4px; }
+    .message.user { background: #0284c7; color: #ffffff; align-self: flex-end; border-bottom-right-radius: 4px; }
 
-    /* Input Area */
-    .input-area { padding: 12px 16px; background: #131b2e; border-top: 1px solid #1e293b; display: flex; gap: 8px; align-items: center; }
-    input { flex: 1; background: #0b0f19; border: 1px solid #334155; color: #fff; padding: 12px 16px; border-radius: 24px; font-size: 15px; outline: none; }
-    input:focus { border-color: #38bdf8; }
-    button { background: #0284c7; color: white; border: none; padding: 12px 18px; border-radius: 24px; font-size: 15px; font-weight: bold; cursor: pointer; transition: 0.2s; }
-    button:active { background: #0369a1; }
+    /* Input Footer */
+    .input-container { padding: 12px 16px; background: #111827; border-top: 1px solid #1f2937; display: flex; align-items: center; gap: 10px; }
+    .input-container input { flex: 1; background: #1f2937; border: 1px solid #374151; color: #ffffff; padding: 12px 16px; border-radius: 24px; font-size: 15px; outline: none; }
+    .input-container input:focus { border-color: #38bdf8; }
+    .input-container button { background: #0284c7; color: white; border: none; width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; cursor: pointer; flex-shrink: 0; }
+    .input-container button:active { background: #0369a1; }
   </style>
 </head>
 <body>
 
-  <div class="header">
-    TRON AI <span>PRO</span>
+  <div class="app-header">
+    <div class="title">TRON AI <span class="badge">PRO</span></div>
   </div>
 
-  <div class="chat-container" id="chat">
+  <div class="chat-box" id="chatBox">
     <div class="message bot">
-      Ассалому алейкум! Ман TRON AI. Чӣ тавр ба шумо кӯмак карда метавонам?
+      Ассалому алейкум! Ман TRON AI ҳастам. Марҳамат, савол ё дархости худро нависед.
     </div>
   </div>
 
-  <div class="input-area">
-    <input type="text" id="userInput" placeholder="Паёми худро нависед..." onkeydown="if(event.key==='Enter') sendMessage()">
-    <button onclick="sendMessage()">➤</button>
+  <div class="input-container">
+    <input type="text" id="userInput" placeholder="Паём фиристед..." autocomplete="off">
+    <button id="sendBtn" onclick="handleSend()">➤</button>
   </div>
 
   <script>
-    function sendMessage() {
-      const input = document.getElementById('userInput');
-      const chat = document.getElementById('chat');
-      const text = input.value.trim();
+    const chatBox = document.getElementById('chatBox');
+    const userInput = document.getElementById('userInput');
 
-      if (text === '') return;
-
-      // Дохил кардани паёми корбар
-      const userMsg = document.createElement('div');
-      userMsg.className = 'message user';
-      userMsg.textContent = text;
-      chat.appendChild(userMsg);
-
-      input.value = '';
-      chat.scrollTop = chat.scrollHeight;
-
-      // Ҷавоби автоматии вақтина
-      setTimeout(() => {
-        const botMsg = document.createElement('div');
-        botMsg.className = 'message bot';
-        botMsg.textContent = "Ман паёми шуморо қабул кардам: \"" + text + "\". Анҷоми пайвасти API барои ҷавобҳои мукаммал мунтазир аст!";
-        chat.appendChild(botMsg);
-        chat.scrollTop = chat.scrollHeight;
-      }, 600);
+    function appendMessage(text, sender) {
+      const msgDiv = document.createElement('div');
+      msgDiv.className = `message ${sender}`;
+      msgDiv.textContent = text;
+      chatBox.appendChild(msgDiv);
+      chatBox.scrollTop = chatBox.scrollHeight;
     }
+
+    function handleSend() {
+      const text = userInput.value.trim();
+      if (!text) return;
+
+      appendMessage(text, 'user');
+      userInput.value = '';
+
+      // Ҷавоби ташхисӣ
+      setTimeout(() => {
+        appendMessage("Паёми шумо қабул шуд: \"" + text + "\". Система комил кор карда истодааст!", 'bot');
+      }, 500);
+    }
+
+    userInput.addEventListener('keydown', function(event) {
+      if (event.key === 'Enter') {
+        handleSend();
+      }
+    });
   </script>
 
 </body>
