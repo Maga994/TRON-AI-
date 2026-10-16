@@ -1,75 +1,79 @@
 <!DOCTYPE html>
-<html lang="tj">
+<html lang="tg">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TRON AI</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            background-color: #0f172a;
-            color: #ffffff;
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-        }
-        header {
-            padding: 15px;
-            text-align: center;
-            background-color: #1e293b;
-            font-size: 20px;
-            font-weight: bold;
-            color: #38bdf8;
-            border-bottom: 1px solid #334155;
-        }
-        .chat-container {
-            flex: 1;
-            padding: 15px;
-            overflow-y: auto;
-        }
-        .message {
-            margin-bottom: 15px;
-            padding: 10px 15px;
-            border-radius: 10px;
-            max-width: 80%;
-        }
-        .bot {
-            background-color: #1e293b;
-            align-self: flex-start;
-        }
-        .input-area {
-            display: flex;
-            padding: 10px;
-            background-color: #1e293b;
-        }
-        input {
-            flex: 1;
-            padding: 10px;
-            border: none;
-            border-radius: 5px;
-            outline: none;
-        }
-        button {
-            margin-left: 10px;
-            padding: 10px 15px;
-            background-color: #38bdf8;
-            border: none;
-            border-radius: 5px;
-            color: #0f172a;
-            font-weight: bold;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>TRON AI</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#0b0f19">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; }
+    body { background-color: #0b0f19; color: #f1f5f9; display: flex; flex-direction: column; height: 100vh; height: 100dvh; overflow: hidden; }
+    
+    /* Header */
+    .header { background: #131b2e; padding: 16px; text-align: center; font-size: 18px; font-weight: bold; color: #38bdf8; border-bottom: 1px solid #1e293b; display: flex; justify-content: center; align-items: center; gap: 8px; }
+    .header span { background: #0284c7; color: #fff; font-size: 10px; padding: 2px 6px; border-radius: 4px; }
+
+    /* Chat Container */
+    .chat-container { flex: 1; padding: 16px; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; }
+    .message { max-width: 85%; padding: 12px 16px; border-radius: 16px; font-size: 15px; line-height: 1.4; word-wrap: break-word; }
+    .bot { background: #1e293b; color: #f8fafc; align-self: flex-start; border-bottom-left-radius: 4px; border: 1px solid #334155; }
+    .user { background: #0284c7; color: #ffffff; align-self: flex-end; border-bottom-right-radius: 4px; }
+
+    /* Input Area */
+    .input-area { padding: 12px 16px; background: #131b2e; border-top: 1px solid #1e293b; display: flex; gap: 8px; align-items: center; }
+    input { flex: 1; background: #0b0f19; border: 1px solid #334155; color: #fff; padding: 12px 16px; border-radius: 24px; font-size: 15px; outline: none; }
+    input:focus { border-color: #38bdf8; }
+    button { background: #0284c7; color: white; border: none; padding: 12px 18px; border-radius: 24px; font-size: 15px; font-weight: bold; cursor: pointer; transition: 0.2s; }
+    button:active { background: #0369a1; }
+  </style>
 </head>
 <body>
-    <header>TRON AI</header>
-    <div class="chat-container">
-        <div class="message bot">Ассалому алейкум! Ман TRON AI. Чӣ кумак карда метавонам?</div>
+
+  <div class="header">
+    TRON AI <span>PRO</span>
+  </div>
+
+  <div class="chat-container" id="chat">
+    <div class="message bot">
+      Ассалому алейкум! Ман TRON AI. Чӣ тавр ба шумо кӯмак карда метавонам?
     </div>
-    <div class="input-area">
-        <input type="text" placeholder="Саволи худро нависед...">
-        <button>Фиристодан</button>
-    </div>
+  </div>
+
+  <div class="input-area">
+    <input type="text" id="userInput" placeholder="Паёми худро нависед..." onkeydown="if(event.key==='Enter') sendMessage()">
+    <button onclick="sendMessage()">➤</button>
+  </div>
+
+  <script>
+    function sendMessage() {
+      const input = document.getElementById('userInput');
+      const chat = document.getElementById('chat');
+      const text = input.value.trim();
+
+      if (text === '') return;
+
+      // Дохил кардани паёми корбар
+      const userMsg = document.createElement('div');
+      userMsg.className = 'message user';
+      userMsg.textContent = text;
+      chat.appendChild(userMsg);
+
+      input.value = '';
+      chat.scrollTop = chat.scrollHeight;
+
+      // Ҷавоби автоматии вақтина
+      setTimeout(() => {
+        const botMsg = document.createElement('div');
+        botMsg.className = 'message bot';
+        botMsg.textContent = "Ман паёми шуморо қабул кардам: \"" + text + "\". Анҷоми пайвасти API барои ҷавобҳои мукаммал мунтазир аст!";
+        chat.appendChild(botMsg);
+        chat.scrollTop = chat.scrollHeight;
+      }, 600);
+    }
+  </script>
+
 </body>
 </html>
